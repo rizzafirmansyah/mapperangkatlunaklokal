@@ -1,0 +1,286 @@
+# Namespace of the mapping file; does not appear in mapped data
+@prefix map: <file:/d2rq-0.8.1/perangkatlunaklokal.ttl#> .
+@prefix d2rq: <http://www.wiwiss.fu-berlin.de/suhl/bizer/D2RQ/0.1#> .
+@prefix d2r: <http://sites.wiwiss.fu-berlin.de/suhl/bizer/d2r-server/config.rdf#> .
+@prefix jdbc: <http://d2rq.org/terms/jdbc/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix owl: <http://www.w3.org/2002/07/owl#>.
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#>.
+@prefix foaf: <http://xmlns.com/foaf/0.1/>.
+@prefix sw: <http://localhost:2020/vocabulary#>.
+@prefix pl: <http://localhost:2020/perangkatlunak#>.
+@prefix cp: <http://localhost:2020/contactperson#>.
+@prefix org: <http://localhost:2020/organization#>.
+@prefix dbo: <http://dbpedia.org/ontology/>.
+
+<> a d2r:Server;
+	rdfs:label "Repositori Perangkat Lunak Lokal Berbasis Linked Data";
+	d2r:port 2020;
+	d2r:baseURI <http://localhost:2020/>;
+    d2r:metadataTemplate "metadata.ttl";
+	d2r:documentMetadata [
+	rdfs:comment "This comment is custom document metadata.";
+	];
+	d2r:limitPerClassMap false;
+	d2r:limitPerPropertyBridge false;
+	.
+
+map:database a d2rq:Database;
+	d2rq:jdbcDriver "com.mysql.jdbc.Driver";
+	d2rq:jdbcDSN "jdbc:mysql://127.0.0.1/db_software";
+	d2rq:username "root";
+	.
+# Table person
+map:person a d2rq:ClassMap;
+	d2rq:dataStorage map:database;
+	d2rq:uriPattern "person/@@person.perID@@";
+	d2rq:class foaf:person;
+	.
+map:persons_Name a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:person;
+	d2rq:property foaf:name;
+	d2rq:pattern "@@person.fname@@ @@person.lname@@";
+	.
+map:person_address a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:person;
+	d2rq:property cp:address;
+    d2rq:column "person.address";
+	.
+map:person_mail a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:person;
+	d2rq:property foaf:mbox;
+	d2rq:uriPattern "mailto:@@person.email@@";
+	.
+map:person_phone a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:person;
+	d2rq:property foaf:phone;
+    d2rq:column "person.phone";
+	.
+# Table software
+map:software a d2rq:ClassMap;
+	d2rq:dataStorage map:database;
+	d2rq:uriPattern "software/@@software.softwareID@@";
+	d2rq:class dbo:Software;
+	.
+map:software_id a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:software;
+	d2rq:property sw:ID;
+	d2rq:column "software.softwareID";
+	.
+map:software_Name a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:software;
+	d2rq:property rdfs:label;
+	d2rq:column "software.name";
+	.
+map:software_desc a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:software;
+	d2rq:property rdfs:comment;
+	d2rq:column "software.description"; 
+	.
+map:software_reference a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:software;
+	d2rq:property pl:reference;
+	d2rq:column "software.reference";
+	.
+map:software_publish a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:software;
+	d2rq:property sw:publish;
+	d2rq:column "software.publish";
+	d2rq:datatype xsd:date;
+	.
+map:software_latestreleaseversion a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:software;
+	d2rq:property sw:latestreleaseversion;
+	d2rq:column "software.latestReleaseVersion";
+	.
+# Table organization
+map:organization a d2rq:ClassMap;
+	d2rq:dataStorage map:database;
+	d2rq:uriPattern "organization/@@organization.orgID@@";
+	d2rq:class sw:organization;
+	.
+map:name_organization a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:organization;
+	d2rq:property rdfs:label;
+	d2rq:column "organization.name";
+	.
+map:organization_address a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:organization;
+	d2rq:property org:address;
+	d2rq:column "organization.address";
+	.
+map:organization_mail a d2rq:PropertyBridge;
+    d2rq:belongsToClassMap map:organization;
+    d2rq:property org:mail;
+	d2rq:uriPattern "mailto:@@organization.mail@@";
+	.
+map:organization_homepage a d2rq:PropertyBridge;
+    d2rq:belongsToClassMap map:organization;
+    d2rq:property org:homepage;
+    d2rq:uriColumn "organization.homepage";
+	.
+# Table operating system
+map:operatingsystem a d2rq:ClassMap;
+	d2rq:dataStorage map:database;
+	d2rq:uriPattern "operatingsystem/@@operatingsystem.osID@@";
+	d2rq:class sw:operatingsystem;
+	.
+map:operatingsystem_name a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:operatingsystem;
+	d2rq:property rdfs:label;
+	d2rq:column "operatingsystem.osName";
+	.
+map:operatingsystem_dbpedia a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:operatingsystem;
+	d2rq:property owl:sameAs;
+	d2rq:uriColumn "operatingsystem.DBpedia";
+	.
+# Table license
+map:license a d2rq:ClassMap;
+	d2rq:dataStorage map:database;
+	d2rq:uriPattern "license/@@license.licenseID@@";
+	d2rq:class sw:license;
+	.
+map:license_name a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:license;
+	d2rq:property rdfs:label;
+	d2rq:column "license.licenseName";
+	.
+map:license_dbpedia a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:license;
+	d2rq:property owl:sameAs;
+	d2rq:uriColumn "license.DBpedia";
+	.
+# Table dbsoftware
+map:dbsoftware a d2rq:ClassMap;
+	d2rq:dataStorage map:database;
+	d2rq:uriPattern "dbsoftware/@@dbsoftware.dbID@@";
+	d2rq:class sw:database;
+	.
+map:dbsoftware_name a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:dbsoftware;
+	d2rq:property rdfs:label;
+	d2rq:column "dbsoftware.dbName";
+	.
+map:dbsoftware_dbpedia a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:dbsoftware;
+	d2rq:property owl:sameAs;
+	d2rq:uriColumn "dbsoftware.DBpedia";
+	.
+# Table industries
+map:industries a d2rq:ClassMap;
+	d2rq:dataStorage map:database;
+	d2rq:uriPattern "industries/@@industries.industryID@@";
+	d2rq:class sw:industries;
+	.
+map:industry_name a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:industries;
+	d2rq:property rdfs:label;
+	d2rq:column "industries.industryName";
+	.
+map:industry_dbpedia a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:industries;
+	d2rq:property owl:sameAs;
+	d2rq:uriColumn "industries.DBpedia";
+	.
+# Table function
+map:functionalities a d2rq:ClassMap;
+	d2rq:dataStorage map:database;
+	d2rq:uriPattern "functionalities/@@functionalities.fuctionID@@";
+	d2rq:class sw:functionalities;
+	.
+map:function_name a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:functionalities;
+	d2rq:property rdfs:label;
+	d2rq:column "functionalities.functionName";
+	.
+map:function_dbpedia a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:functionalities;
+	d2rq:property owl:sameAs;
+	d2rq:uriColumn "functionalities.DBpedia";
+	.
+# Table programminglanguage
+map:programminglanguage a d2rq:ClassMap;
+	d2rq:dataStorage map:database;
+	d2rq:uriPattern "programminglanguage/@@proglanguage.proglangID@@";
+	d2rq:class sw:programminglanguage;
+	.
+map:programminglanguage_name a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:programminglanguage;
+	d2rq:property rdfs:label;
+	d2rq:column "proglanguage.proglangName";
+	.
+map:programminglanguage_dbpedia a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:programminglanguage;
+	d2rq:property owl:sameAs;
+	d2rq:uriColumn "proglanguage.DBpedia";
+	.	
+# n:m table rel_software_os
+map:rel_software_os a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:software;
+	d2rq:property sw:os;
+	d2rq:refersToClassMap map:operatingsystem;
+	d2rq:join "software.softwareID = rel_software_os.softID";
+	d2rq:join "rel_software_os.osystemID = operatingsystem.osID";
+	.
+# n:m table rel_software_industries
+map:rel_software_industries a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:software;
+	d2rq:property sw:industry;
+	d2rq:refersToClassMap map:industries;
+	d2rq:join "software.softwareID = rel_software_industries.softID";
+	d2rq:join "rel_software_industries.indID = industries.industryID";
+	.
+# n:m table rel_software_function
+map:rel_software_function a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:software;
+	d2rq:property sw:function;
+	d2rq:refersToClassMap map:functionalities;
+	d2rq:join "software.softwareID = rel_software_function.softID";
+	d2rq:join "rel_software_function.funcID = functionalities.fuctionID";
+	.
+# n:m table rel_software_db
+map:rel_software_db a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:software;
+	d2rq:property sw:db;
+	d2rq:refersToClassMap map:dbsoftware;
+	d2rq:join "software.softwareID = rel_software_db.softID";
+	d2rq:join "rel_software_db.dbaseID = dbsoftware.dbID";
+	.
+# 1:m table rel_organization_software
+map:rel_organization_software a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:software;
+	d2rq:property sw:developing;
+	d2rq:refersToClassMap map:organization;
+	d2rq:join "software.organizationID = organization.orgID";
+	.	
+# 1:m table rel_organization_person
+map:rel_organization_person a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:person;
+	d2rq:property cp:work;
+	d2rq:refersToClassMap map:organization;
+	d2rq:join "person.organizationID = organization.orgID";
+	.
+# 1:m table rel_person_software
+map:rel_person_software a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:software;
+	d2rq:property sw:contactperson;
+	d2rq:refersToClassMap map:person;
+	d2rq:join "software.personID = person.perID";
+	.
+# 1:m table rel_license_software
+map:rel_license_software a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:software;
+	d2rq:property sw:lisensi;
+	d2rq:refersToClassMap map:license;
+	d2rq:join "software.licenseID = license.licenseID";
+	.
+# n:m table rel_software_proglanguage
+map:rel_software_proglanguage a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:software;
+	d2rq:property sw:proglanguage;
+	d2rq:refersToClassMap map:programminglanguage;
+	d2rq:join "software.softwareID = rel_software_proglanguage.softID";
+	d2rq:join "rel_software_proglanguage.proglangID = proglanguage.proglangID";
+	.
