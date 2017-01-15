@@ -35,6 +35,7 @@ map:database a d2rq:Database;
 map:person a d2rq:ClassMap;
 	d2rq:dataStorage map:database;
 	d2rq:uriPattern "person/@@person.perID@@";
+	d2rq:condition "person.status = 2";
 	d2rq:class foaf:person;
 	.
 map:persons_Name a d2rq:PropertyBridge;
@@ -61,6 +62,7 @@ map:person_phone a d2rq:PropertyBridge;
 map:software a d2rq:ClassMap;
 	d2rq:dataStorage map:database;
 	d2rq:uriPattern "software/@@software.softwareID@@";
+	d2rq:condition "software.status = 2";
 	d2rq:class dbo:Software;
 	.
 map:software_id a d2rq:PropertyBridge;
@@ -94,10 +96,16 @@ map:software_latestreleaseversion a d2rq:PropertyBridge;
 	d2rq:property sw:latestreleaseversion;
 	d2rq:column "software.latestReleaseVersion";
 	.
+map:software_logo a d2rq:PropertyBridge;
+	d2rq:belongsToClassMap map:software;
+	d2rq:property sw:logo;
+	d2rq:column "software.softLogo";
+	.
 # Table organization
 map:organization a d2rq:ClassMap;
 	d2rq:dataStorage map:database;
 	d2rq:uriPattern "organization/@@organization.orgID@@";
+	d2rq:condition "organization.status = 2";
 	d2rq:class sw:organization;
 	.
 map:name_organization a d2rq:PropertyBridge;
@@ -223,6 +231,7 @@ map:rel_software_os a d2rq:PropertyBridge;
 	d2rq:refersToClassMap map:operatingsystem;
 	d2rq:join "software.softwareID = rel_software_os.softID";
 	d2rq:join "rel_software_os.osystemID = operatingsystem.osID";
+	d2rq:condition "rel_software_os.status = 2";
 	.
 # n:m table rel_software_industries
 map:rel_software_industries a d2rq:PropertyBridge;
@@ -231,6 +240,7 @@ map:rel_software_industries a d2rq:PropertyBridge;
 	d2rq:refersToClassMap map:industries;
 	d2rq:join "software.softwareID = rel_software_industries.softID";
 	d2rq:join "rel_software_industries.indID = industries.industryID";
+	d2rq:condition "rel_software_industries.status = 2";
 	.
 # n:m table rel_software_function
 map:rel_software_function a d2rq:PropertyBridge;
@@ -239,6 +249,7 @@ map:rel_software_function a d2rq:PropertyBridge;
 	d2rq:refersToClassMap map:functionalities;
 	d2rq:join "software.softwareID = rel_software_function.softID";
 	d2rq:join "rel_software_function.funcID = functionalities.fuctionID";
+	d2rq:condition "rel_software_function.status = 2";
 	.
 # n:m table rel_software_db
 map:rel_software_db a d2rq:PropertyBridge;
@@ -247,6 +258,7 @@ map:rel_software_db a d2rq:PropertyBridge;
 	d2rq:refersToClassMap map:dbsoftware;
 	d2rq:join "software.softwareID = rel_software_db.softID";
 	d2rq:join "rel_software_db.dbaseID = dbsoftware.dbID";
+	d2rq:condition "rel_software_db.status = 2";
 	.
 # 1:m table rel_organization_software
 map:rel_organization_software a d2rq:PropertyBridge;
@@ -283,4 +295,5 @@ map:rel_software_proglanguage a d2rq:PropertyBridge;
 	d2rq:refersToClassMap map:programminglanguage;
 	d2rq:join "software.softwareID = rel_software_proglanguage.softID";
 	d2rq:join "rel_software_proglanguage.proglangID = proglanguage.proglangID";
+	d2rq:condition "rel_software_proglanguage.status = 2";
 	.
